@@ -140,7 +140,7 @@ public class TradeNetworkService {
 		} 
 		
 		switch(request.getStatus()) {
-			case null: // If it wasn't set for some reason (E.g. a new request);
+			//case null: // If it wasn't set for some reason (E.g. a new request);
 			case REJECTED: // If our application was previously rejected
 			case REMOVED: // If we joined and were removed at some point
 			case PENDING: // If its already pending, see if auto-join was turned on after we originally requested
