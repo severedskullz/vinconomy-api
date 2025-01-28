@@ -1,0 +1,48 @@
+Player installs Vinconomy
+Player starts single player world, or joins server (assumes Admin/creative role)
+
+
+If the player is playing on a single player server, or a MP server that just wishes to join the GLOBAL network
+	Player with admin rights runs join command
+		/vincon network join
+
+
+
+
+Player creates account
+	/vincon network register SeveredSkullz Password
+Server receives UserRegistration request with player name, UUID, user name, password
+Player creates network under account
+	/vincon network create SeveredSkullz Password My Network
+	/vincon network create Password My Network
+Vintage Story sends request to server. Uses player that ran the command's UUID for lookup under which account to add it to if not provided
+
+Server attempts to generate new Network Access Key key for new network
+	Search repository for same key. If it exists, generate a new one.
+	If the generation fails after 5 times, throw an error. (shouldn't ever happen)
+
+Server creates account and sends back the new Network Access Key to the player
+	This key is meant to be distributed to all servers wishing to join the network
+	
+Player runs command to join via the Network Access Key
+	/vincon network join MyAccessKey
+	/vincon network join        (Uses "GLOBAL" as access key)
+	
+If the network automatically accepts requests then
+	Server will create a new Trade Network Node listing and generate an API Key for the server
+	Server will send GUID and API Key to Vintage Story, which will populate the configuration file
+	Game has now joined the network!
+	
+If the network does not automatically accept requests then
+	Player must view each join request
+		/vincon network pending
+	Player will be shown the first pending requests and can either accept or reject
+		/vincon network accept
+		/vincon network reject
+		/vincon network acceptall
+		/vincon network rejectall
+
+		
+Player can check on their application by running the command
+	/vincon network status
+	This will print out the status of the network, whether or not a request is sent out and its status, as well as the name of the network if it has joined one
