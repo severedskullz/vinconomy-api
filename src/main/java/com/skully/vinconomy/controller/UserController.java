@@ -62,6 +62,7 @@ public class UserController {
 	}
 	
 	@GetMapping()
+	//TODO: Disable after testing. Exposes username/roles
 	public Authentication getUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		return auth;

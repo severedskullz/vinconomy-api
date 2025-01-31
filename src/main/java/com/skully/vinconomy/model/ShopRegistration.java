@@ -1,28 +1,18 @@
 package com.skully.vinconomy.model;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-
-@Entity
-public class Shop {
-
-	@EmbeddedId
-	private ShopId id;
-
-	private String name;
+public class ShopRegistration {
 	
-	private String owner;
-	
-	private String description;
+	public long id;
+	public String name;
+	public String owner;
+	public String description;
+	public String shortDescription;
 	
 	
-	
-	
-	
-	public ShopId getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(ShopId id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getName() {
@@ -42,6 +32,13 @@ public class Shop {
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}	
+	}
+	public String getShortDescription() {
+		return shortDescription;
+	}
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+	
 	
 }

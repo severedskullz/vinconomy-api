@@ -1,4 +1,4 @@
-package com.skully.vinconomy.service.configuration;
+package com.skully.vinconomy.security;
 
 import java.util.Collection;
 

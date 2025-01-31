@@ -21,8 +21,8 @@ import com.skully.vinconomy.model.dto.TradeNetworkJoinRequest;
 import com.skully.vinconomy.model.dto.TradeNetworkJoinResult;
 import com.skully.vinconomy.model.dto.TradeNetworkNodeRegistration;
 import com.skully.vinconomy.model.dto.TradeNetworkRegistration;
+import com.skully.vinconomy.security.ApiUserDetails;
 import com.skully.vinconomy.service.TradeNetworkService;
-import com.skully.vinconomy.service.configuration.ApiUserDetails;
 
 import jakarta.servlet.http.HttpServletRequest;
 

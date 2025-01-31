@@ -1,36 +1,62 @@
 package com.skully.vinconomy.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.skully.vinconomy.dao.ShopRepository;
 import com.skully.vinconomy.model.Shop;
-import com.skully.vinconomy.model.ShopId;
-
-import jakarta.websocket.server.PathParam;
+import com.skully.vinconomy.model.ShopRegistration;
+import com.skully.vinconomy.model.dto.ShopProducts;
+import com.skully.vinconomy.security.ApiKeyAuthentication;
+import com.skully.vinconomy.service.ShopService;
 
 @RestController()
 @RequestMapping("/api/shop")
 public class ShopController {
 
 	@Autowired
-	ShopRepository dao;
+	ShopService shopService;
 	
 	@GetMapping("/list")
 	public String getShops() {
-		Shop shop = new Shop();
-		shop.setName("Test");
-		shop.setId( new ShopId("TestNetworkId", 1234));
-		dao.save(shop);
 		return "Blah";
 	}
 	
-	@PostMapping("/{networkId}/register")
-	public String registerShop(@PathParam("networkId") String networkId) {
-		return "Blah";
+	@PreAuthorize("hasAuthority('GAME_API')")
+	@PutMapping("/register")
+	public Shop registerShop(@RequestBody() ShopRegistration reg, ApiKeyAuthentication auth) {
+		//ApiKeyAuthentication auth = (ApiKeyAuthentication) SecurityContextHolder.getContext().getAuthentication();
+		if (reg.getId() <= 0) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID is required");
+		}
+		
+		if (StringUtils.isBlank(reg.getName())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+		}
+		
+		if (StringUtils.isBlank(reg.getOwner())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+		}
+				
+		return shopService.registerShop(reg, auth.getNode());
+	}
+	
+	@PreAuthorize("hasAuthority('GAME_API')")
+	@PatchMapping("/{shopId}/products")
+	public String updateShopProducts(@RequestBody() ShopProducts reg, ApiKeyAuthentication auth) {
+		//ApiKeyAuthentication auth = (ApiKeyAuthentication) SecurityContextHolder.getContext().getAuthentication();
+		return shopService.updateProducts(reg, auth.getNode());
 	}
 	
 	@PostMapping("/{networkId}/{shopId}/remove")

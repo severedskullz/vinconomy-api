@@ -10,4 +10,6 @@ public interface TradeNetworkNodeRepository extends CrudRepository<TradeNetworkN
 
 	TradeNetworkNode findByGuid(String guid);
 
+	TradeNetworkNode findByApiKey(String apiKey);
+
 }
