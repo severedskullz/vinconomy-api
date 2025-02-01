@@ -1,7 +1,5 @@
 package com.skully.vinconomy.model;
 
-import com.skully.vinconomy.dao.ShopProductId;
-
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 

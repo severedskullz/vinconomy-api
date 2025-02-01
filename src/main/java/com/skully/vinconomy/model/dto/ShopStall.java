@@ -2,7 +2,7 @@ package com.skully.vinconomy.model.dto;
 
 import java.util.List;
 
-public class StallProduct {
+public class ShopStall {
 	
 	private int x;
 	private int y;

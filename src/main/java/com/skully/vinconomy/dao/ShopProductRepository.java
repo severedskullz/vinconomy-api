@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.skully.vinconomy.model.ShopProduct;
+import com.skully.vinconomy.model.ShopProductId;
 
 public interface ShopProductRepository extends CrudRepository<ShopProduct, ShopProductId> {
 

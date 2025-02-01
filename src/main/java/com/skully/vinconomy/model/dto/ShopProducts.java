@@ -5,7 +5,7 @@ import java.util.List;
 public class ShopProducts {
 	public long id;
 	public boolean removeAll;
-	public List<StallProduct> products;
+	public List<ShopStall> stalls;
 	
 	public long getId() {
 		return id;
@@ -13,11 +13,11 @@ public class ShopProducts {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public List<StallProduct> getProducts() {
-		return products;
+	public List<ShopStall> getStalls() {
+		return stalls;
 	}
-	public void setProducts(List<StallProduct> products) {
-		this.products = products;
+	public void setStalls(List<ShopStall> stalls) {
+		this.stalls = stalls;
 	}
 	public boolean isRemoveAll() {
 		return removeAll;

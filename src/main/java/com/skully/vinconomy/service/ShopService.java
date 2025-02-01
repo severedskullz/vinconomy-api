@@ -1,5 +1,7 @@
 package com.skully.vinconomy.service;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,17 +10,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.skully.vinconomy.dao.ShopProductId;
 import com.skully.vinconomy.dao.ShopProductRepository;
 import com.skully.vinconomy.dao.ShopRepository;
+import com.skully.vinconomy.dao.ShopTradeRequestRepository;
+import com.skully.vinconomy.enums.TradeStatus;
 import com.skully.vinconomy.model.Shop;
 import com.skully.vinconomy.model.ShopId;
 import com.skully.vinconomy.model.ShopProduct;
+import com.skully.vinconomy.model.ShopProductId;
 import com.skully.vinconomy.model.ShopRegistration;
+import com.skully.vinconomy.model.ShopTrade;
 import com.skully.vinconomy.model.TradeNetworkNode;
 import com.skully.vinconomy.model.dto.Product;
 import com.skully.vinconomy.model.dto.ShopProducts;
-import com.skully.vinconomy.model.dto.StallProduct;
+import com.skully.vinconomy.model.dto.ShopStall;
+import com.skully.vinconomy.model.dto.ShopTradeRequest;
 import com.skully.vinconomy.util.GameUtils;
 
 @Repository
@@ -30,6 +36,9 @@ public class ShopService {
 	
 	@Autowired
 	ShopProductRepository productDao;
+	
+	@Autowired
+	ShopTradeRequestRepository tradeRequestDao;
 	
 	public Shop registerShop(ShopRegistration reg, TradeNetworkNode node) {
 		ShopId id = new ShopId(node.getGuid(), reg.getId());
@@ -57,9 +66,9 @@ public class ShopService {
 			productDao.deleteByShopId(serverId, shopId);
 		}
 		
-		List<StallProduct> stallList = shopProducts.getProducts();
+		List<ShopStall> stallList = shopProducts.getStalls();
 		
-		for (StallProduct stall : stallList) {
+		for (ShopStall stall : stallList) {
 			if (stall.isRemoveAll()) {
 				productDao.deleteByStall(serverId, shopId, stall.getX(), stall.getY(), stall.getZ());
 			} else {
@@ -92,8 +101,45 @@ public class ShopService {
 		
 	}
 	
-	public void updateShopProducts(Shop shop, List<ShopProduct> products) {
+	public String deleteShop(TradeNetworkNode node, long shopId) {
+		productDao.deleteByShopId(node.getId(), shopId);
+		ShopId id = new ShopId(node.getGuid(), shopId);
+		shopDao.deleteById(id);
+		return null;
+	}
+
+	public List<ShopTrade> getPendingTrades(TradeNetworkNode node, int shopId) {
+		return tradeRequestDao.findAllByShopIdAndStatus(new ShopId(node.getGuid(), shopId), TradeStatus.PENDING);
+	}
+
+	public ShopTrade addPendingTrade(String networkId, long shopId, ShopTradeRequest req, TradeNetworkNode node) {
+
+		Shop shop = GameUtils.getOptional(shopDao.findById(new ShopId(networkId, shopId)));
+		if (shop == null) 
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Shop ID not found");
 		
+		ShopTrade trade = new ShopTrade();
+		trade.setRequestingNode(node);
+		
+		trade.setShop(shop);
+		trade.setX(req.getX());
+		trade.setY(req.getY());
+		trade.setZ(req.getZ());
+		trade.setStallSlot(req.getStallSlot());
+		
+		trade.setProductCode(req.getProductCode());
+		trade.setProductAttributes(req.getProductAttributes());
+		trade.setProductQuantity(req.getProductQuantity());
+		
+		trade.setCurrencyCode(req.getCurrencyCode());
+		trade.setCurrencyAttributes(req.getCurrencyAttributes());
+		trade.setCurrencyQuantity(req.getCurrencyQuantity());
+		
+		Timestamp instant = Timestamp.from(Calendar.getInstance().toInstant());
+		trade.setCreated(instant);
+		trade.setModified(instant);
+		
+		return tradeRequestDao.save(trade);
 	}
 
 }

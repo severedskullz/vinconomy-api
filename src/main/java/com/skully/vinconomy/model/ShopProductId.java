@@ -1,4 +1,4 @@
-package com.skully.vinconomy.dao;
+package com.skully.vinconomy.model;
 
 import java.io.Serializable;
 import java.util.Objects;
