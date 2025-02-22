@@ -32,6 +32,6 @@ public interface ShopProductRepository extends CrudRepository<ShopProduct, ShopP
 	@Query("FROM ShopProduct WHERE id.nodeId = :nodeId AND id.x = :X AND id.y = :Y AND id.z = :Z ORDER BY id.stallSlot ASC")
 	List<ShopProduct> getProductsForStall(@Param("nodeId") long nodeId, @Param("X") int x, @Param("Y") int y, @Param("Z") int z);
 
-	@Query("FROM ShopProduct where id.nodeId = :nodeId AND id.shopId = :shopId")
+	@Query("FROM ShopProduct where id.nodeId = :nodeId AND id.shopId = :shopId ORDER BY productCode")
 	List<ShopProduct> findByNodeIdAndShopId(@Param("nodeId")long nodeId, @Param("shopId")int shopId);
 }
