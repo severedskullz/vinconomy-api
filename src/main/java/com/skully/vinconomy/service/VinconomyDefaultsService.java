@@ -37,7 +37,7 @@ public class VinconomyDefaultsService {
     		reg.setAutoAcceptRequests(true);
     		reg.setVisible(true);
     		reg.setModdedItemsAllowed(false);
-    		reg.setAsyncType(AsyncType.DEPOT);
+    		reg.setAsyncType(AsyncType.ASYNC);
 
     		tradeNetworkService.registerTradeNetwork(reg, userService.getApiUser("admin"), "GLOBAL");
     		

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,7 @@ import com.skully.vinconomy.model.dto.TradeNetworkJoinRequest;
 import com.skully.vinconomy.model.dto.TradeNetworkJoinResult;
 import com.skully.vinconomy.model.dto.TradeNetworkNodeRegistration;
 import com.skully.vinconomy.model.dto.TradeNetworkRegistration;
+import com.skully.vinconomy.security.ApiKeyAuthentication;
 import com.skully.vinconomy.security.ApiUserDetails;
 import com.skully.vinconomy.service.TradeNetworkService;
 
@@ -33,7 +35,7 @@ public class TradeNetworkController {
 	@Autowired
 	TradeNetworkService service;
 	
-	@RequestMapping(path = "/node", method = RequestMethod.PUT)
+	@PutMapping("/node")
 	public TradeNetworkNode registerTradeNetworkNode(@RequestBody() TradeNetworkNodeRegistration reg, HttpServletRequest request) {
 		
 		if (StringUtils.isBlank(reg.getName())) 
@@ -50,7 +52,7 @@ public class TradeNetworkController {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method = RequestMethod.PUT)
+	@PutMapping()
 	public TradeNetwork registerTradeNetwork(@RequestBody() TradeNetworkRegistration reg, @AuthenticationPrincipal ApiUserDetails user) {
 		
 		if (StringUtils.isBlank(reg.getName())) 
@@ -66,18 +68,21 @@ public class TradeNetworkController {
 	 * @param networkId
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('GAME_API')")
 	@PostMapping("/join")
-	public TradeNetworkJoinResult joinTradeNetwork(@RequestBody() TradeNetworkJoinRequest reg) {
-		reg.setUsername(null); //Prevent malicious insertion of "username" into request
-		return service.requestJoinTradeNetwork(reg);
+	public TradeNetworkJoinResult joinTradeNetwork(@RequestBody() TradeNetworkJoinRequest reg, ApiKeyAuthentication auth) {
+		//reg.setUsername(null); //Prevent malicious insertion of "username" into request
+		return service.requestJoinTradeNetwork(reg, auth);
 	}
 	
+	/*
 	@PostMapping("/{networkid}/join")
-	public TradeNetworkJoinResult joinTradeNetwork(@PathVariable("networkid") Long networkId, @RequestBody() TradeNetworkJoinRequest reg, @AuthenticationPrincipal User user) {
+	public TradeNetworkJoinResult joinTradeNetwork(@PathVariable("networkid") Long networkId, @RequestBody() TradeNetworkJoinRequest reg, ApiKeyAuthentication auth) {
 		reg.setNetworkId(networkId);
 		reg.setUsername(user.getUsername());
-		return service.requestJoinTradeNetwork(reg);
+		return service.requestJoinTradeNetwork(reg, auth);
 	}
+	*/
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/{networkid}/requests")

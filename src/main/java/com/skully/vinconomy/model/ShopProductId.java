@@ -3,19 +3,27 @@ package com.skully.vinconomy.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 
+@Embeddable
 public class ShopProductId implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Column(name="node_id")
 	private long nodeId;
-	private long shopId;
+	@Column(name="pos_x")
 	private int x;
+	@Column(name="pos_y")
 	private int y;
+	@Column(name="pos_z")
 	private int z;
+	@Column(name="stall_slot")
 	private int stallSlot;
-	
+	@Column(name="shop_id")
+	private int shopId;
 	
 	public ShopProductId() { //No Arg Constructor for Hibernate
 		
@@ -23,7 +31,7 @@ public class ShopProductId implements Serializable{
 	
 	
 	
-	public ShopProductId(long nodeId, long shopId, int x, int y, int z, int stallSlot) {
+	public ShopProductId(long nodeId, int shopId, int x, int y, int z, int stallSlot) {
 		super();
 		this.nodeId = nodeId;
 		this.shopId = shopId;
@@ -40,12 +48,6 @@ public class ShopProductId implements Serializable{
 	}
 	public void setNodeId(long nodeId) {
 		this.nodeId = nodeId;
-	}
-	public long getShopId() {
-		return shopId;
-	}
-	public void setShopId(long shopId) {
-		this.shopId = shopId;
 	}
 	public int getX() {
 		return x;
@@ -71,12 +73,16 @@ public class ShopProductId implements Serializable{
 	public void setStallSlot(int stallSlot) {
 		this.stallSlot = stallSlot;
 	}
-
-
+	public long getShopId() {
+		return shopId;
+	}
+	public void setShopId(int shopId) {
+		this.shopId = shopId;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(nodeId, shopId, stallSlot, x, y, z);
+		return Objects.hash(nodeId, stallSlot, x, y, z);
 	}
 
 
@@ -90,7 +96,7 @@ public class ShopProductId implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		ShopProductId other = (ShopProductId) obj;
-		return Objects.equals(nodeId, other.nodeId) && shopId == other.shopId && stallSlot == other.stallSlot
+		return Objects.equals(nodeId, other.nodeId) && stallSlot == other.stallSlot
 				&& x == other.x && y == other.y && z == other.z;
 	}
 	

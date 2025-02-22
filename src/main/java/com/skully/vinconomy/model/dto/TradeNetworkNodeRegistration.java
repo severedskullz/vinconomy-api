@@ -8,12 +8,10 @@ public class TradeNetworkNodeRegistration implements Serializable {
 	
 	private String name;
 	private String guid;
-	private String description;
 	private String host;
 	private String ip;
 	private String username;
 	private String udpListenPort;
-	private boolean autoAcceptRequests;
 	
 	public String getName() {
 		return name;
@@ -26,19 +24,6 @@ public class TradeNetworkNodeRegistration implements Serializable {
 	}
 	public void setGuid(String guid) {
 		this.guid = guid;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public boolean isAutoAcceptRequests() {
-		return autoAcceptRequests;
-	}
-	public void setAutoAcceptRequests(boolean autoAcceptRequests) {
-		this.autoAcceptRequests = autoAcceptRequests;
 	}
 	public String getUdpListenPort() {
 		return udpListenPort;

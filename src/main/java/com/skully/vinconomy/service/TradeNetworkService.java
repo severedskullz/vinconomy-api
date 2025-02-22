@@ -2,7 +2,6 @@ package com.skully.vinconomy.service;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import com.skully.vinconomy.model.dto.TradeNetworkJoinRequest;
 import com.skully.vinconomy.model.dto.TradeNetworkJoinResult;
 import com.skully.vinconomy.model.dto.TradeNetworkNodeRegistration;
 import com.skully.vinconomy.model.dto.TradeNetworkRegistration;
+import com.skully.vinconomy.security.ApiKeyAuthentication;
 import com.skully.vinconomy.util.GameUtils;
 import com.skully.vinconomy.util.PasswordUtils;
 
@@ -47,13 +47,22 @@ public class TradeNetworkService {
 		if (GameUtils.isInvalidGUID(reg.getGuid()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "GUID is invalid");
 		
+		TradeNetworkNode existingNode = tradeNetworkNodeRepo.findByGuid(reg.getGuid());
+		if (existingNode != null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "GUID already exists");
+		}
+		
 		TradeNetworkNode node = new TradeNetworkNode();
 		node.setServerName(reg.getName());
 		node.setGuid(reg.getGuid());
 		node.setLastAccessed(new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
 		node.setHostname(reg.getHost());
 		node.setIp(reg.getIp());
-		node.setOwner(reg.getUsername());
+		if (StringUtils.isBlank(reg.getUsername())) {
+			node.setOwner("ANONYMOUS");
+		} else {
+			node.setOwner(reg.getUsername());
+		}
 		node.setApiKey(PasswordUtils.generatePassword());
 		
 		//0509d2e4-88a3-4c0e-8fbb-be998f4af4b6
@@ -82,19 +91,24 @@ public class TradeNetworkService {
 		return tradeNetworkRepo.save(network);
 	}
 
-	public TradeNetworkJoinResult requestJoinTradeNetwork(TradeNetworkJoinRequest reg) {
+	public TradeNetworkJoinResult requestJoinTradeNetwork(TradeNetworkJoinRequest reg, ApiKeyAuthentication auth) {
+		
+		//TODO: Going to require them to have registered at some point already, and to use Auth's node instead.
+		// This means the server should have access to the API key to prove ownership. Should also take care of all
+		// the needed info like GUID, username/pass, server name, network Id, etc.
+		
 		
 		TradeNetwork network = null;
-		TradeNetworkNode node = null;
+		TradeNetworkNode node = auth.getNode();
 		TradeNetworkRequest request = null;
 		
 		// Validation
-		if (GameUtils.isInvalidGUID(reg.getGuid()))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "GUID is invalid");
+		//if (GameUtils.isInvalidGUID(reg.getGuid()))
+		//	throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "GUID is invalid");
 		
 		// Check if the node already exists, and if so, if it is owned by a different user
-		node = tradeNetworkNodeRepo.findByGuid(reg.getGuid());
-		if (node != null && !node.getOwner().equals("ANONYMOUS") && !node.getOwner().equals(reg.getUsername()))
+		//node = tradeNetworkNodeRepo.findByGuid(reg.getGuid());
+		if (node != null && node.getOwner() != null && !node.getOwner().equals("ANONYMOUS") && !node.getOwner().equals(reg.getUsername()))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "GUID is claimed by a different account");
 		
 		// Check if network they are trying to join is valid
@@ -102,11 +116,11 @@ public class TradeNetworkService {
 		if (StringUtils.isNotBlank(reg.getNetworkAccessKey())) {
 			network = tradeNetworkRepo.findByNetworkAccessKey(reg.getNetworkAccessKey());
 		} else if (reg.getNetworkId() != null){
-			network = getOptional(tradeNetworkRepo.findById(reg.getNetworkId()));
+			network = GameUtils.getOptional(tradeNetworkRepo.findById(reg.getNetworkId()));
 		}
 		
 		if (network == null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Network is not valid");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Network access key " + reg.getNetworkAccessKey() +" is not valid ");
 		}
 		// End Validation
 			
@@ -167,14 +181,6 @@ public class TradeNetworkService {
 		return result;
 	}
 	
-
-
-	private static <T> T getOptional(Optional<T> optional) {
-		if (optional.isEmpty()) {
-			return null;
-		}
-		return optional.get();
-	}
 
 	public TradeNetwork findByNetworkAccessKey(String key) {
 		return tradeNetworkRepo.findByNetworkAccessKey(key);

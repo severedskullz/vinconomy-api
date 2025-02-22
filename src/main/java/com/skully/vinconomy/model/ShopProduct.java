@@ -1,14 +1,17 @@
 package com.skully.vinconomy.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ShopProduct {
 
 	@EmbeddedId
 	private ShopProductId id;
-	
 	private String productName;
 	private String productCode;
 	private int productQuantity;
@@ -20,6 +23,13 @@ public class ShopProduct {
 	private String currencyAttributes;
 	
 	private int totalStock;
+	
+	@ManyToOne
+	@JoinColumns({
+	     @JoinColumn(name="node_id", referencedColumnName="node_id", insertable = false, updatable = false),
+	     @JoinColumn(name="shop_id", referencedColumnName="shop_id", insertable = false, updatable = false)
+	})
+	private Shop shop;
 
 	public ShopProductId getId() {
 		return id;
@@ -99,6 +109,5 @@ public class ShopProduct {
 
 	public void setTotalStock(int totalStock) {
 		this.totalStock = totalStock;
-	}
-	
+	}	
 }

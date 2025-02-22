@@ -3,14 +3,14 @@ package com.skully.vinconomy.model.dto;
 import java.util.List;
 
 public class ShopProducts {
-	public long id;
+	public int id;
 	public boolean removeAll;
 	public List<ShopStall> stalls;
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public List<ShopStall> getStalls() {

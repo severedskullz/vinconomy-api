@@ -3,29 +3,35 @@ package com.skully.vinconomy.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class ShopId implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	@Column(name="shop_id")
 	private long shopId;
 	
-	private String networkId;
+	@Column(name="node_id")
+	private long networkNodeId;
 
 	public ShopId() { //No Arg Constructor for Hibernate
 		
 	}
 	
-	public ShopId(String networkId, long shopId) {
+	public ShopId(long networkId, long shopId) {
 		super();
 		this.shopId = shopId;
-		this.networkId = networkId;
+		this.networkNodeId = networkId;
 	}
 
 	
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(networkId, shopId);
+		return Objects.hash(networkNodeId, shopId);
 	}
 
 	@Override
@@ -37,7 +43,7 @@ public class ShopId implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ShopId other = (ShopId) obj;
-		return Objects.equals(networkId, other.networkId) && Objects.equals(shopId, other.shopId);
+		return Objects.equals(networkNodeId, other.networkNodeId) && Objects.equals(shopId, other.shopId);
 	}
 
 	public long getShopId() {
@@ -48,12 +54,12 @@ public class ShopId implements Serializable {
 		this.shopId = shopId;
 	}
 
-	public String getNetworkId() {
-		return networkId;
+	public long getNetworkNodeId() {
+		return networkNodeId;
 	}
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
+	public void setNetworkNodeId(long networkId) {
+		this.networkNodeId = networkId;
 	}
 	
 	
