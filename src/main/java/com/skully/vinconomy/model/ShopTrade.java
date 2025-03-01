@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class ShopTrade {
@@ -21,21 +20,19 @@ public class ShopTrade {
 	private TradeStatus status;
 	@ManyToOne
 	private Shop shop;
-	@OneToOne
+	@ManyToOne
 	private TradeNetworkNode requestingNode;
+	@ManyToOne
+	private TradeNetworkNode originNode;
 	private int x;
 	private int y;
 	private int z;
 	private int stallSlot;
 
-	private String productCode;
-	private int productQuantity;
-	private String productAttributes;
-
-	private String currencyCode;
-	private int currencyQuantity;
-	private String currencyAttributes;
+	private String name;
+	private String playerGuid;
 	
+	private int amount;
 
 	private Timestamp created;
 	private Timestamp modified;
@@ -83,42 +80,6 @@ public class ShopTrade {
 	public void setStallSlot(int stallSlot) {
 		this.stallSlot = stallSlot;
 	}
-	public String getProductCode() {
-		return productCode;
-	}
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-	public int getProductQuantity() {
-		return productQuantity;
-	}
-	public void setProductQuantity(int productQuantity) {
-		this.productQuantity = productQuantity;
-	}
-	public String getProductAttributes() {
-		return productAttributes;
-	}
-	public void setProductAttributes(String productAttributes) {
-		this.productAttributes = productAttributes;
-	}
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-	public int getCurrencyQuantity() {
-		return currencyQuantity;
-	}
-	public void setCurrencyQuantity(int currencyQuantity) {
-		this.currencyQuantity = currencyQuantity;
-	}
-	public String getCurrencyAttributes() {
-		return currencyAttributes;
-	}
-	public void setCurrencyAttributes(String currencyAttributes) {
-		this.currencyAttributes = currencyAttributes;
-	}
 	public Timestamp getCreated() {
 		return created;
 	}
@@ -137,4 +98,29 @@ public class ShopTrade {
 	public void setRequestingNode(TradeNetworkNode requestingNode) {
 		this.requestingNode = requestingNode;
 	}
+	public TradeNetworkNode getTargetNode() {
+		return originNode;
+	}
+	public void setTargetNode(TradeNetworkNode targetNode) {
+		this.originNode = targetNode;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getPlayerGuid() {
+		return playerGuid;
+	}
+	public void setPlayerGuid(String playerGuid) {
+		this.playerGuid = playerGuid;
+	}
+	public int getAmount() {
+		return amount;
+	}
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+	
 }

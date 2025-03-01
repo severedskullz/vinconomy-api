@@ -1,6 +1,7 @@
 package com.skully.vinconomy.service;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.skully.vinconomy.dao.ShopProductRepository;
 import com.skully.vinconomy.dao.ShopRepository;
-import com.skully.vinconomy.dao.ShopTradeRequestRepository;
+import com.skully.vinconomy.dao.ShopTradeRepository;
 import com.skully.vinconomy.dao.TradeNetworkNodeRepository;
 import com.skully.vinconomy.enums.TradeStatus;
 import com.skully.vinconomy.model.Shop;
@@ -33,7 +34,7 @@ import com.skully.vinconomy.model.dto.ShopTradeUpdate;
 import com.skully.vinconomy.model.dto.TradeNetworkShop;
 import com.skully.vinconomy.util.GameUtils;
 
-@Repository
+@Service
 public class ShopService {
 
 	Logger logger = LoggerFactory.getLogger(ShopService.class);
@@ -47,7 +48,7 @@ public class ShopService {
 	ShopProductRepository productDao;
 	
 	@Autowired
-	ShopTradeRequestRepository tradeRequestDao;
+	ShopTradeRepository tradeRequestDao;
 	
 	@Autowired
 	TradeNetworkNodeRepository tradeNetworkDao;
@@ -173,15 +174,15 @@ public class ShopService {
 		trade.setZ(req.getZ());
 		trade.setStallSlot(req.getStallSlot());
 		
-		trade.setProductCode(req.getProductCode());
-		trade.setProductAttributes(req.getProductAttributes());
-		trade.setProductQuantity(req.getProductQuantity());
+		//trade.setProductCode(req.getProductCode());
+		//trade.setProductAttributes(req.getProductAttributes());
+		//trade.setProductQuantity(req.getProductQuantity());
 		
-		trade.setCurrencyCode(req.getCurrencyCode());
-		trade.setCurrencyAttributes(req.getCurrencyAttributes());
-		trade.setCurrencyQuantity(req.getCurrencyQuantity());
+		//trade.setCurrencyCode(req.getCurrencyCode());
+		//trade.setCurrencyAttributes(req.getCurrencyAttributes());
+		//trade.setCurrencyQuantity(req.getCurrencyQuantity());
 		
-		Timestamp instant = Timestamp.from(Calendar.getInstance().toInstant());
+		Timestamp instant = Timestamp.from(Instant.now());
 		trade.setCreated(instant);
 		trade.setModified(instant);
 		
