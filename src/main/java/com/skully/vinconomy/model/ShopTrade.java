@@ -98,12 +98,6 @@ public class ShopTrade {
 	public void setRequestingNode(TradeNetworkNode requestingNode) {
 		this.requestingNode = requestingNode;
 	}
-	public TradeNetworkNode getTargetNode() {
-		return originNode;
-	}
-	public void setTargetNode(TradeNetworkNode targetNode) {
-		this.originNode = targetNode;
-	}
 	public String getName() {
 		return name;
 	}
@@ -121,6 +115,12 @@ public class ShopTrade {
 	}
 	public void setAmount(int amount) {
 		this.amount = amount;
+	}
+	public TradeNetworkNode getOriginNode() {
+		return originNode;
+	}
+	public void setOriginNode(TradeNetworkNode originNode) {
+		this.originNode = originNode;
 	}
 	
 }

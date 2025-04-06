@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.skully.vinconomy.model.ShopTrade;
 import com.skully.vinconomy.model.dto.ShopPurchaseUpdate;
+import com.skully.vinconomy.model.dto.ShopTradeUpdate;
 import com.skully.vinconomy.security.ApiKeyAuthentication;
 import com.skully.vinconomy.service.MarketService;
 
@@ -29,6 +30,12 @@ public class MarketController {
 	}
 	
 	
+	@PreAuthorize("hasAuthority('GAME_API')")
+	@PostMapping("/purchases/pending")
+	public String updatePurchasedItems(@RequestBody List<ShopTradeUpdate> updates, ApiKeyAuthentication auth) {
+		return marketService.updatePurchaseItems(updates, auth.getNode(), false);
+	}
+	
 	/**
 	 * 
 	 * Gets the Pending item purchases for items sold on this node by another node
@@ -40,7 +47,7 @@ public class MarketController {
 	 */
 	@PreAuthorize("hasAuthority('GAME_API')")
 	@GetMapping("/purchases/pending")
-	public List<ShopTrade> getPurchasedItems(ApiKeyAuthentication auth) {
+	public List<ShopTradeUpdate> getPurchasedItems(ApiKeyAuthentication auth) {
 		return marketService.getPurchasedItems(auth.getNode());
 	}
 	

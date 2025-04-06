@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,7 +32,6 @@ import com.skully.vinconomy.model.dto.Product;
 import com.skully.vinconomy.model.dto.ShopProducts;
 import com.skully.vinconomy.model.dto.ShopStall;
 import com.skully.vinconomy.model.dto.ShopTradeRequest;
-import com.skully.vinconomy.model.dto.ShopTradeUpdate;
 import com.skully.vinconomy.model.dto.TradeNetworkShop;
 import com.skully.vinconomy.util.GameUtils;
 
@@ -100,6 +101,7 @@ public class ShopService {
 				productDao.deleteByStall(serverId, stall.getX(), stall.getY(), stall.getZ());
 			} else {
 				HashMap<Integer, ShopProduct> productMap = new HashMap<>();
+				List<ShopProduct> removalList = new LinkedList<>();
 				List<ShopProduct> existingProducts = productDao.getProductsForStall(serverId,  stall.getX(), stall.getY(), stall.getZ());
 				for (ShopProduct product : existingProducts) {
 					productMap.put(product.getId().getStallSlot(), product);
@@ -116,7 +118,12 @@ public class ShopService {
 						productMap.put(productUpdate.getStallSlot(), prod);
 					} else if (prod.getId().getShopId() != shopId) {
 						logger.info("Product for different shop {} for slot {} at {} {} {} on server {} - Updating to {}!", prod.getId().getShopId(), productUpdate.getStallSlot(), stall.getX(), stall.getY(), stall.getZ(), serverId, shopId );
-						prod.getId().setShopId(shopId);
+						removalList.add(prod);
+						ShopProductId productId = new ShopProductId(serverId, shopId, stall.getX(), stall.getY(), stall.getZ(), productUpdate.getStallSlot());
+						prod = new ShopProduct();
+						prod.setId(productId);
+						productMap.put(productUpdate.getStallSlot(), prod);
+						
 					} else {
 						logger.info("Updating product for slot {} at {} {} {} on server {}",productUpdate.getStallSlot(), stall.getX(), stall.getY(), stall.getZ(), serverId );
 						
@@ -134,7 +141,7 @@ public class ShopService {
 					
 					prod.setTotalStock(productUpdate.getTotalStock());
 				}
-				
+				productDao.deleteAll(removalList);
 				productDao.saveAll(productMap.values());
 			}
 		}
@@ -206,10 +213,10 @@ public class ShopService {
 	 * @param req
 	 * @param node
 	 */
-	public void updatePendingTrade(long tradeId, ShopTradeUpdate req, TradeNetworkNode node) {
+	public void updatePendingTrade(long tradeId, TradeStatus status, TradeNetworkNode node) {
 		ShopTrade trade = GameUtils.getOptional(tradeRequestDao.findById(tradeId));
 		if (trade == null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trade ID not found");
+			throw new IllegalArgumentException("Trade ID not found");
 		}
 		
 		
@@ -219,26 +226,26 @@ public class ShopService {
 		if (isOwner) {
 			// Must be Pending for us to ACK it
 			if (trade.getStatus() != TradeStatus.PENDING) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trade not in PENDING status");
+				throw new IllegalStateException("Trade not in PENDING status");
 			}
 			
-			if (!OWNER_PENDING_TRANSITIONS.contains(req.getStatus())) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Target status transition is not allowed in the current state");
+			if (!OWNER_PENDING_TRANSITIONS.contains(status)) {
+				throw new IllegalStateException("Target status transition is not allowed in the current state");
 			}
 			
 		} else if (isRequester) {
 			
-			if ((trade.getStatus() == TradeStatus.PENDING && req.getStatus() != TradeStatus.CANCELED) 
-					|| (trade.getStatus() == TradeStatus.PROCESSED && req.getStatus() != TradeStatus.COMPLETED)) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Target status transition is not allowed in the current state");
+			if ((trade.getStatus() == TradeStatus.PENDING && status != TradeStatus.CANCELED) 
+					|| (trade.getStatus() == TradeStatus.PROCESSED && status != TradeStatus.COMPLETED)) {
+				throw new IllegalStateException("Target status transition is not allowed in the current state");
 			}
 
 		} else {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+			throw new AccessDeniedException("Access Denied");
 		}
 
 		
-		trade.setStatus(req.getStatus());
+		trade.setStatus(status);
 		trade.setModified(Timestamp.from(Calendar.getInstance().toInstant()));
 		tradeRequestDao.save(trade);
 		

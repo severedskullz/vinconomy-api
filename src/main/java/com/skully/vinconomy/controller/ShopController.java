@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import com.skully.vinconomy.model.ShopRegistration;
 import com.skully.vinconomy.model.ShopTrade;
 import com.skully.vinconomy.model.dto.ShopProducts;
 import com.skully.vinconomy.model.dto.ShopTradeRequest;
-import com.skully.vinconomy.model.dto.ShopTradeUpdate;
+import com.skully.vinconomy.model.dto.ShopTradeStatusUpdate;
 import com.skully.vinconomy.model.dto.TradeNetworkShop;
 import com.skully.vinconomy.security.ApiKeyAuthentication;
 import com.skully.vinconomy.service.ShopService;
@@ -121,8 +122,16 @@ public class ShopController {
 	 */
 	@PreAuthorize("hasAuthority('GAME_API')")
 	@PatchMapping("/trades/{tradeId}")
-	public String processPendingTrade(@RequestBody() ShopTradeUpdate req, @PathVariable("tradeId") long tradeId, ApiKeyAuthentication auth) {
-		shopService.updatePendingTrade(tradeId, req, auth.getNode());
+	public String processPendingTrade(@RequestBody() ShopTradeStatusUpdate req, @PathVariable("tradeId") long tradeId, ApiKeyAuthentication auth) {
+		try {
+		shopService.updatePendingTrade(tradeId, req.getStatus(), auth.getNode());
+		}
+		catch (IllegalStateException | IllegalArgumentException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+		catch (AccessDeniedException e) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+		}
 		return "Success";
 	}
 	

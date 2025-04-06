@@ -100,5 +100,21 @@ public class ShopProductId implements Serializable{
 				&& x == other.x && y == other.y && z == other.z;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(nodeId);
+		builder.append("-");
+		builder.append(shopId);
+		builder.append("-");
+		builder.append(x);
+		builder.append("-");
+		builder.append(y);
+		builder.append("-");
+		builder.append(z);
+		builder.append("-");
+		builder.append(stallSlot);
+		return builder.toString();
+	}
 	
 }

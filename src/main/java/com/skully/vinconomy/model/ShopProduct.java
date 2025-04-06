@@ -109,4 +109,9 @@ public class ShopProduct {
 	public void setTotalStock(int totalStock) {
 		this.totalStock = totalStock;
 	}	
+	
+	@Override
+	public String toString() {
+		return id.toString();
+	}
 }
