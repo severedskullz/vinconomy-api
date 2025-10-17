@@ -23,7 +23,7 @@ public class ShopProductId implements Serializable{
 	@Column(name="stall_slot")
 	private int stallSlot;
 	@Column(name="shop_id")
-	private int shopId;
+	private long shopId;
 	
 	public ShopProductId() { //No Arg Constructor for Hibernate
 		
@@ -31,7 +31,7 @@ public class ShopProductId implements Serializable{
 	
 	
 	
-	public ShopProductId(long nodeId, int shopId, int x, int y, int z, int stallSlot) {
+	public ShopProductId(long nodeId, long shopId, int x, int y, int z, int stallSlot) {
 		super();
 		this.nodeId = nodeId;
 		this.shopId = shopId;

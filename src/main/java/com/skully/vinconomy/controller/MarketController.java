@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.skully.vinconomy.model.ShopTrade;
+import com.skully.vinconomy.model.dto.SearchOptions;
+import com.skully.vinconomy.model.dto.SearchResult;
 import com.skully.vinconomy.model.dto.ShopPurchaseUpdate;
 import com.skully.vinconomy.model.dto.ShopTradeUpdate;
 import com.skully.vinconomy.security.ApiKeyAuthentication;
@@ -22,7 +23,13 @@ public class MarketController {
 
 	@Autowired
 	MarketService marketService;
-		
+	
+	@PreAuthorize("hasAuthority('GAME_API')")
+	@PostMapping("/search")
+	public List<SearchResult> searchItems(@RequestBody SearchOptions searchOptions, ApiKeyAuthentication auth) {
+		return marketService.searchItems(searchOptions, auth.getNode());
+	}
+	
 	@PreAuthorize("hasAuthority('GAME_API')")
 	@PostMapping("/purchase")
 	public String purchaseItems(@RequestBody List<ShopPurchaseUpdate> updates, ApiKeyAuthentication auth) {

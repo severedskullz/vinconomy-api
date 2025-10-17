@@ -4,10 +4,11 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.skully.vinconomy.dao.ShopRepository;
 import com.skully.vinconomy.dao.ShopTradeRepository;
@@ -17,6 +18,8 @@ import com.skully.vinconomy.model.Shop;
 import com.skully.vinconomy.model.ShopId;
 import com.skully.vinconomy.model.ShopTrade;
 import com.skully.vinconomy.model.TradeNetworkNode;
+import com.skully.vinconomy.model.dto.SearchOptions;
+import com.skully.vinconomy.model.dto.SearchResult;
 import com.skully.vinconomy.model.dto.ShopPurchaseUpdate;
 import com.skully.vinconomy.model.dto.ShopTradeUpdate;
 import com.skully.vinconomy.util.GameUtils;
@@ -114,6 +117,13 @@ public class MarketService {
 		}
 		
 		return "SUCCESS";
+	}
+
+	public List<SearchResult> searchItems(SearchOptions searchOptions, TradeNetworkNode node) {
+		if (node.getNetwork() == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This node does not belong to a network");
+		}
+		return shopDao.searchShopsFor(node.getNetwork().getId(), searchOptions.getOwner(), searchOptions.getShopName(), searchOptions.getProductName(), searchOptions.getCurrencyName());
 	}
 
 }

@@ -4,7 +4,7 @@ import com.skully.vinconomy.enums.TradeStatus;
 
 public class ShopPurchaseUpdate {
 	private String nodeId;
-	private int shopId;
+	private long shopId;
 	private int amount;
 	private int X;
 	private int Y;
@@ -20,10 +20,10 @@ public class ShopPurchaseUpdate {
 	public void setNodeId(String nodeId) {
 		this.nodeId = nodeId;
 	}
-	public int getShopId() {
+	public long getShopId() {
 		return shopId;
 	}
-	public void setShopId(int shopId) {
+	public void setShopId(long shopId) {
 		this.shopId = shopId;
 	}
 	public int getAmount() {
