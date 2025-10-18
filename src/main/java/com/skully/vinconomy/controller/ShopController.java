@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.skully.vinconomy.model.Shop;
 import com.skully.vinconomy.model.ShopRegistration;
 import com.skully.vinconomy.model.ShopTrade;
-import com.skully.vinconomy.model.dto.ShopProducts;
+import com.skully.vinconomy.model.dto.ShopUpdate;
 import com.skully.vinconomy.model.dto.ShopTradeRequest;
 import com.skully.vinconomy.model.dto.ShopTradeStatusUpdate;
 import com.skully.vinconomy.model.dto.TradeNetworkShop;
@@ -61,7 +61,7 @@ public class ShopController {
 	@PreAuthorize("hasAuthority('GAME_API')")
 	@PatchMapping("/products/{shopId}")
 	//TODO: Perhaps it should be List<ShopProducts> instead?
-	public String updateShopProducts(@RequestBody() ShopProducts reg, @PathVariable("shopId") int shopId, ApiKeyAuthentication auth) {
+	public String updateShopProducts(@RequestBody() ShopUpdate reg, @PathVariable("shopId") int shopId, ApiKeyAuthentication auth) {
 		//ApiKeyAuthentication auth = (ApiKeyAuthentication) SecurityContextHolder.getContext().getAuthentication();
 		return shopService.updateProducts(reg, auth.getNode());
 	}

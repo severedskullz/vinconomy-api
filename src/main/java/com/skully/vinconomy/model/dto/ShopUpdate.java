@@ -2,8 +2,13 @@ package com.skully.vinconomy.model.dto;
 
 import java.util.List;
 
-public class ShopProducts {
+public class ShopUpdate {
 	public int id;
+	
+	public String name;
+	public String owner;
+	public String description;
+	
 	public boolean removeAll;
 	public List<ShopStall> stalls;
 	
@@ -25,6 +30,22 @@ public class ShopProducts {
 	public void setRemoveAll(boolean removeAll) {
 		this.removeAll = removeAll;
 	}
-	
-	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getOwner() {
+		return owner;
+	}
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

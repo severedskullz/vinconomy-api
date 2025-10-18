@@ -15,16 +15,15 @@ public class Shop {
 	
 	private String description;
 	
-	
-	
-	
+	public Shop() {} // Hibernate Default Constructor
+	public Shop(ShopId id) {
+		this.id = id;
+	}
 	
 	public ShopId getId() {
 		return id;
 	}
-	public void setId(ShopId id) {
-		this.id = id;
-	}
+
 	public String getName() {
 		return name;
 	}
