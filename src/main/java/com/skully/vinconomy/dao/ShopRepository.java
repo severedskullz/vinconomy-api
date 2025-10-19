@@ -13,16 +13,17 @@ import com.skully.vinconomy.model.dto.SearchResult;
 
 public interface ShopRepository extends CrudRepository<Shop, ShopId> {
 
-	@Query("select new com.skully.vinconomy.model.dto.SearchResult(network.guid, network.serverName, shop.id.shopId, shop.name, shop.owner, shop.description) FROM Shop as shop "
+	@Query("select new com.skully.vinconomy.model.dto.SearchResult(node.guid, node.serverName, shop.id.shopId, shop.name, shop.owner, shop.description) FROM Shop as shop "
 			+ "inner join ShopProduct as product on shop.id.networkNodeId = product.id.nodeId and shop.id.shopId = product.id.shopId "
-			+ "inner join TradeNetworkNode as network on shop.id.networkNodeId = network.id "
+			+ "inner join TradeNetworkNode as node on shop.id.networkNodeId = node.id "
 			+ "where "
 			+ "(:shopName is null OR shop.name LIKE %:shopName%)"
 			+ " AND (:productName is null OR product.productName LIKE %:productName%)"
 			+ " AND (:currencyName is null OR product.currencyName LIKE %:currencyName%)"
 			+ " AND (:owner is null OR shop.owner LIKE %:owner%)"
-			+ " AND network.id = :networkId"
+			+ " AND node.id != :nodeId"
+            + " AND node.network.id = :networkId"
 			+ " GROUP BY shop.id.networkNodeId, shop.id.shopId"
 			)
-	public List<SearchResult> searchShopsFor(@Param("networkId") long networkId, @Param("owner") String owner, @Param("shopName") String shopName, @Param("productName") String productName, @Param("currencyName") String currencyName);
+	List<SearchResult> searchShopsFor(@Param("networkId") long networkId,@Param("nodeId") long nodeId, @Param("owner") String owner, @Param("shopName") String shopName, @Param("productName") String productName, @Param("currencyName") String currencyName);
 }

@@ -29,7 +29,7 @@ import com.skully.vinconomy.model.ShopRegistration;
 import com.skully.vinconomy.model.ShopTrade;
 import com.skully.vinconomy.model.TradeNetworkNode;
 import com.skully.vinconomy.model.dto.Product;
-import com.skully.vinconomy.model.dto.ShopProducts;
+import com.skully.vinconomy.model.dto.ShopUpdate;
 import com.skully.vinconomy.model.dto.ShopStall;
 import com.skully.vinconomy.model.dto.ShopTradeRequest;
 import com.skully.vinconomy.model.dto.TradeNetworkShop;
@@ -62,8 +62,7 @@ public class ShopService {
 			shop = existing.get();
 			
 		} else {
-			shop = new Shop();
-			shop.setId(id);
+			shop = new Shop(id);
 		}
 		shop.setName(reg.getName());
 		shop.setOwner(reg.getOwner());
@@ -72,23 +71,25 @@ public class ShopService {
 		return shop;
 	}
 	
-	public String updateProducts(ShopProducts shopProductsUpdate, TradeNetworkNode node) {
+	public String updateProducts(ShopUpdate update, TradeNetworkNode node) {
 		long serverId = node.getId();
-		int shopId = shopProductsUpdate.getId();
+		int shopId = update.getId();
 		ShopId id = new ShopId(node.getId(), shopId);
 		Shop shop = GameUtils.getOptional(shopDao.findById(id));
 		if (shop == null) {
-			logger.warn("Shop doesnt exist for products in update. Creating a blank placeholder.");
-			shop = new Shop();
-			shop.setId(id);
-			shop = shopDao.save(shop);
+			logger.trace("Shop doesnt exist for products in update. Creating a blank placeholder.");
+			shop = new Shop(id);
 		}
+		shop.setDescription(update.description);
+		shop.setName(update.name);
+		shop.setOwner(update.owner);
+		shop = shopDao.save(shop);
 		
-		if (shopProductsUpdate.isRemoveAll()) {
+		if (update.isRemoveAll()) {
 			productDao.deleteByShopId(serverId, shopId);
 		}
 		
-		List<ShopStall> stallList = shopProductsUpdate.getStalls();
+		List<ShopStall> stallList = update.getStalls();
 		
 		//TODO: It is currently clearing ALL stall slots that werent updated.
 		// We want to remove old entries if/when we change Shops for the stall
@@ -146,6 +147,7 @@ public class ShopService {
 			}
 		}
 		
+		//TODO: I had anticipated needing to return some sort of return value, but now I dont remember what this was for months later. Remove?
 		return "Updated!";
 		
 	}

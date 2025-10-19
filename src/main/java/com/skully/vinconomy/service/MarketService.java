@@ -123,7 +123,7 @@ public class MarketService {
 		if (node.getNetwork() == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This node does not belong to a network");
 		}
-		return shopDao.searchShopsFor(node.getNetwork().getId(), searchOptions.getOwner(), searchOptions.getShopName(), searchOptions.getProductName(), searchOptions.getCurrencyName());
+		return shopDao.searchShopsFor(node.getNetwork().getId(),node.getId(), searchOptions.getOwner(), searchOptions.getShopName(), searchOptions.getProductName(), searchOptions.getCurrencyName());
 	}
 
 }
