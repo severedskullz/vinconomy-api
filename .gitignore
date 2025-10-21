@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Powershell Scripts in the root project catalog for customized project builds  ###
+/custom_*.ps1
+
+### Bash Scripts in the root project catalog for customized project builds ###
+/custom_*.sh
