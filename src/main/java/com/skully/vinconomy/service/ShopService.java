@@ -29,10 +29,11 @@ import com.skully.vinconomy.model.ShopRegistration;
 import com.skully.vinconomy.model.ShopTrade;
 import com.skully.vinconomy.model.TradeNetworkNode;
 import com.skully.vinconomy.model.dto.Product;
-import com.skully.vinconomy.model.dto.ShopUpdate;
-import com.skully.vinconomy.model.dto.ShopStall;
-import com.skully.vinconomy.model.dto.ShopTradeRequest;
-import com.skully.vinconomy.model.dto.TradeNetworkShop;
+import com.skully.vinconomy.model.dto.shop.ShopStall;
+import com.skully.vinconomy.model.dto.shop.ShopTradeRequest;
+import com.skully.vinconomy.model.dto.shop.ShopUpdate;
+import com.skully.vinconomy.model.dto.tradenetwork.TradeNetworkShop;
+import com.skully.vinconomy.security.ApiKeyAuthentication;
 import com.skully.vinconomy.util.GameUtils;
 
 @Service
@@ -55,6 +56,11 @@ public class ShopService {
 	TradeNetworkNodeRepository tradeNetworkDao;
 	
 	public Shop registerShop(ShopRegistration reg, TradeNetworkNode node) {
+		
+		if (reg.getId() <= 0) {
+			throw new IllegalArgumentException("ID cannot be less than 1");
+		}
+		
 		ShopId id = new ShopId(node.getId(), reg.getId());
 		Shop shop;
 		Optional<Shop> existing = shopDao.findById(id);
@@ -74,6 +80,11 @@ public class ShopService {
 	public String updateProducts(ShopUpdate update, TradeNetworkNode node) {
 		long serverId = node.getId();
 		int shopId = update.getId();
+
+		if (shopId <= 0) {
+			throw new IllegalArgumentException("ID cannot be less than 1");
+		}
+		
 		ShopId id = new ShopId(node.getId(), shopId);
 		Shop shop = GameUtils.getOptional(shopDao.findById(id));
 		if (shop == null) {
@@ -278,6 +289,15 @@ public class ShopService {
 		shop.lastUpdatedTimestamp = node.getLastAccessed().getTime();
 		
 		return shop;
+	}
+
+	public List<Shop> getAllShops(ApiKeyAuthentication auth) {
+		return shopDao.findAllByNetwork(auth.getNode().getNetwork().getId());
+	}
+
+	public Shop getShopById(long id, long shopId) {
+		return GameUtils.getOptional(shopDao.findById(new ShopId(id, shopId)));
+
 	}
 
 }
